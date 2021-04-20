@@ -48,7 +48,7 @@ AddEventHandler('esx_status:playerLoaded', function(status)
 			break
 		end
 	end
-	local identifier = string.gsub(license, "steam", "Char1")
+	local identifier = license
 	--local identifier = license
 	print(identifier)
 	MySQL.Async.fetchAll('SELECT status FROM users WHERE identifier = @identifier', {

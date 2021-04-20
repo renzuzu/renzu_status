@@ -15,5 +15,6 @@ server_scripts {
 client_scripts {
 	'config.lua',
 	'client/classes/status.lua',
-	'client/main.lua'
+	'client/main.lua',
+	'effect.lua',
 }
