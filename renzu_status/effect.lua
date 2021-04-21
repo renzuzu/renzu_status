@@ -2,7 +2,6 @@
 	Citizen.CreateThread(function()
 		
 		for k,v in pairs(Config.register_status) do
-			print(v)
 			TriggerEvent('esx_status:registerStatus', v, Config.status_start_value[v], '#CFAD0F', function(status)
 				return true
 				end, function(status)
@@ -21,24 +20,23 @@
 			thirst = 0
 			hunger = 0
 			energy = 0
-			TriggerEvent('esx_status:getStatusm', Config.register_status, function(status)
-				for k,v in pairs(status) do
-					print(k)
-					if k == 'thirst' then
-						thirst = v.getPercent()
-					end
-					if k == 'sanity' then
-						sanity = v.getPercent()
-					end
-					if k == 'energy' then
-						energy = v.getPercent()
-					end
-					if k == 'hunger' then
-						hunger = v.getPercent()
-					end
+			local status = GetStatus(Config.register_status)
+			for k,v in pairs(status) do
+				Wait(100)
+				if k == 'thirst' then
+					thirst = v / 10000
 				end
-				fetch = true
-			end)
+				if k == 'sanity' then
+					sanity = v / 10000
+				end
+				if k == 'energy' then
+					energy = v / 10000
+				end
+				if k == 'hunger' then
+					hunger = v / 10000
+				end
+			end
+			fetch = true
 			while not fetch do
 				Citizen.Wait(100)
 			end
@@ -68,10 +66,8 @@
 			end
 			TriggerEvent('esx_status:remove', 'energy', 3)
 
-			print(sanity)
 			
 			if sanity >= 98 and not crazy then
-				print(sanity)
 				--Makeloading(msg,ms)
 				TriggerEvent('esx_basicneeds:sanityeffect')
 				--TriggerServerEvent("Server:SoundToClient", NetworkGetNetworkIdFromEntity(GetPlayerPed(-1)),"crazy", 1.00)
@@ -85,7 +81,7 @@
 			if health ~= prevHealth then
 				SetEntityHealth(playerPed, health)
 			end
-			Citizen.Wait(1000)
+			Citizen.Wait(10000)
 		end
 	end)
 	
@@ -100,6 +96,7 @@
 	
 	function Makeloading(msg,ms)
 		BusyspinnerOff()
+		Wait(10)
 		AddTextEntry("CUSTOMLOADSTR", msg)
 		BeginTextCommandBusyspinnerOn("CUSTOMLOADSTR")
 		EndTextCommandBusyspinnerOn(4)
@@ -167,9 +164,9 @@
 			Makeloading('You are out of energy and sleepy',4000)
 			--exports['progressBars']:startUI(4000, 'You are out of energy and sleepy')
 			Citizen.Wait(500)
-			while IsEntityPlayingAnim(playerPed, lib, anim, 3) do
-			Citizen.Wait(0)
-			DisableAllControlActions(0)
+				while IsEntityPlayingAnim(playerPed, lib, anim, 3) do
+				Citizen.Wait(0)
+				DisableAllControlActions(0)
 			end
 			Makeloading('You have passed out',1000)
 			local lib2, anim2 = 'missarmenian2', 'corpse_search_exit_ped' -- TODO better animations
@@ -179,9 +176,9 @@
 			Makeloading('Taking a Nap',9000)
 			Citizen.Wait(500)
 			while IsEntityPlayingAnim(playerPed, lib2, anim2, 3) do
-			DoScreenFadeOut(10000)
-			Citizen.Wait(0)
-			DisableAllControlActions(0)
+				DoScreenFadeOut(10000)
+				Citizen.Wait(0)
+				DisableAllControlActions(0)
 			end
 			StopScreenEffect('DeathFailOut')
 			DoScreenFadeIn(250)
@@ -189,6 +186,7 @@
 			StopGameplayCamShaking(true)
 			ResetPedMovementClipset(playerPed, 0.0)
 			isBlackedOut = false
-			TriggerEvent('esx_status:add', 'energy', 300000)
+			TriggerEvent('esx_status:add', 'energy', 700000)
+			antok = false
 		end)
 	end)

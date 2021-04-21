@@ -56,18 +56,11 @@ AddEventHandler('esx_status:load', function(status)
 			end
 		end
 	end
-
 	Citizen.CreateThread(function()
 		while true do
 			for i=1, #Status, 1 do
 				Status[i].onTick()
 			end
-
-			SendNUIMessage({
-				update = true,
-				status = GetStatusData()
-			})
-
 			TriggerEvent('esx_status:onTick', GetStatusData(true))
 			Citizen.Wait(Config.TickTime)
 		end
@@ -82,12 +75,6 @@ AddEventHandler('esx_status:set', function(name, val)
 			break
 		end
 	end
-
-	SendNUIMessage({
-		update = true,
-		status = GetStatusData()
-	})
-
 	TriggerServerEvent('esx_status:update', GetStatusData(true))
 end)
 
@@ -105,12 +92,6 @@ AddEventHandler('esx_status:add', function(name, val)
 			break
 		end
 	end
-
-	SendNUIMessage({
-		update = true,
-		status = GetStatusData()
-	})
-
 	TriggerServerEvent('esx_status:update', GetStatusData(true))
 end)
 
@@ -122,19 +103,11 @@ AddEventHandler('esx_status:remove', function(name, val)
 			break
 		end
 	end
-
-	SendNUIMessage({
-		update = true,
-		status = GetStatusData()
-	})
-
 	TriggerServerEvent('esx_status:update', GetStatusData(true))
 end)
 
 AddEventHandler('esx_status:getStatus', function(name, cb)
-	--print(Status)
 	for i=1, #Status, 1 do
-		--print(Status[i].name)
 		if Status[i].name == name then
 			cb(Status[i])
 			return
@@ -156,16 +129,30 @@ AddEventHandler('esx_status:getStatusm', function(table, cb)
 	cb(multi)
 end)
 
-AddEventHandler('esx_status:setDisplay', function(val)
-	SendNUIMessage({
-		setDisplay = true,
-		display    = val
-	})
+function GetStatus(table)
+	local multi = {}
+	for i=1, #Status, 1 do
+		for k,v in pairs(table) do
+			if v == Status[i].name then
+				multi[v] = Status[i].val
+			end
+		end
+	end
+	return multi
+end
+
+Citizen.CreateThread(function()
+	Citizen.Wait(100)
+	exports('GetStatus', function(x)
+		return GetStatus(x)
+	end)
 end)
 
--- Pause menu disable hud display
 Citizen.CreateThread(function()
 	Citizen.Wait(1000)
+	exports('GetStatus', function(x)
+		return GetStatus(x)
+	end)
 	TriggerServerEvent("esx_status:playerLoaded")
 	while true do
 		Citizen.Wait(300)
@@ -184,7 +171,6 @@ end)
 Citizen.CreateThread(function()
 	while true do
 		Citizen.Wait(Config.UpdateInterval)
-
 		TriggerServerEvent('esx_status:update', GetStatusData(true))
 	end
 end)
