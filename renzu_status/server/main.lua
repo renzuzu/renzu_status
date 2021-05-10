@@ -46,17 +46,19 @@ function getStatus(source)
 			end
 		end
 		identifier = GetSteam(source)
-		MySQL.Async.fetchAll('SELECT status FROM users WHERE identifier = @identifier', {
-			['@identifier'] = identifier
-		}, function(result)
-			local data = {}
+		if identifier ~= nil then
+			MySQL.Async.fetchAll('SELECT status FROM users WHERE identifier = @identifier', {
+				['@identifier'] = identifier
+			}, function(result)
+				local data = {}
 
-			if result[1].status then
-				data = json.decode(result[1].status)
-			end
-			statusset(data, source)
-			TriggerClientEvent('esx_status:load', source, data)
-		end)
+				if result[1] and result[1].status then
+					data = json.decode(result[1].status)
+				end
+				statusset(data, source)
+				TriggerClientEvent('esx_status:load', source, data)
+			end)
+		end
 	end
 end
 
@@ -102,7 +104,7 @@ function SaveData()
 		local source = GetPlayerFromIndex(i)
 		getStatus(tonumber(source))
 		local status  = statusget(tonumber(source))
-		if status ~= 'null' and status ~= nil then
+		if GetPlayerPed(source) ~= 0 and status ~= 'null' and status ~= nil and status ~= '[]' then
 			MySQL.Async.execute('UPDATE users SET status = @status WHERE identifier = @identifier', {
 				['@status']     = json.encode(status),
 				['@identifier'] = GetSteam(tonumber(source))
@@ -138,3 +140,32 @@ if Config.SaveLoop then
 		SaveData()
 	end)
 end
+
+function havePermission(i)
+	for k,v in pairs(Config.Admins) do
+		if v == i then
+		return true
+		end
+	end
+	return false
+end
+
+RegisterCommand("heal", function(source, args, rawCommand)
+	if source ~= 0 then
+		if havePermission(GetPlayerIdentifier(source, 0)) then
+			if args[1] then
+				local playerId = tonumber(args[1])
+				if GetPlayerName(playerId) then
+					print(('esx_basicneeds: %s healed %s'):format(GetPlayerIdentifier(source, 0), GetPlayerIdentifier(playerId, 0)))
+					TriggerClientEvent('esx_status:healPlayer', playerId)
+					TriggerClientEvent('chat:addMessage', source, { args = { '^5HEAL', 'You have been healed.' } })
+				else
+					TriggerClientEvent('chat:addMessage', source, { args = { '^1SYSTEM', 'Player not online.' } })
+				end
+			else
+				print(('esx_status: %s healed self'):format(GetPlayerIdentifier(source, 0)))
+				TriggerClientEvent('esx_status:healPlayer', source)
+			end
+		end
+	end
+end, false)

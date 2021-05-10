@@ -182,3 +182,14 @@ Citizen.CreateThread(function()
 		TriggerServerEvent('esx_status:update', GetStatusData(true))
 	end
 end)
+
+RegisterNetEvent('esx_status:healPlayer')
+AddEventHandler('esx_status:healPlayer', function()
+	-- restore status 
+	for k,v in pairs(Config.status_start_value) do
+		TriggerEvent('esx_status:set', k, v)
+	end
+	-- restore hp
+	local playerPed = PlayerPedId()
+	SetEntityHealth(playerPed, GetEntityMaxHealth(playerPed))
+end)

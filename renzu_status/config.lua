@@ -1,12 +1,9 @@
 Config = {}
 
 Config.StatusMax      = 1000000
---OPTIMIZING and effect/remove/add of status will be affected if this value is changed
--- lesser value == more status removal or add
---higher value less status removal or add
-Config.TickTime       = 4000 --default 10000
-Config.UpdateInterval = 4500 --default 15000
-Config.SaveDelay = 5000 --default 20000
+Config.TickTime       = 4000
+Config.UpdateInterval = 4500
+Config.SaveDelay = 5000
 Config.SaveLoop = true -- save every SaveDelay
 
 -- change to license: , if you are using licensed in identifier
@@ -30,4 +27,8 @@ Config.status_start_value = { -- starting points for status
 ['thirst'] = 1000000,
 ['sanity'] = 0, -- need to be a zero value
 ['energy'] = 1000000,
+}
+
+Config.Admins = {
+    'steam:11000013ec77a2e',
 }
