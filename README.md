@@ -3,9 +3,10 @@ THIS IS CREATED BASED ON ESX STATUS
 COPYRIGHT TO ESX STATUS CREATOR
 
 Standalone Status Created for Renzu Hud Status Function
+This version doesnt have a UI
 
 # esx_status
-ESX Status
+Standalone Framework FIVEM Status
 [INSTALLATION]
 
 1) CD in your resources/[esx] folder
@@ -17,27 +18,28 @@ git clone https://github.com/renzuzu/renzu_status/ renzu_status
 4) Add this in your server.cfg :
 
 ```
-start esx_status
+start standalone_status
 ```
 
 [HOWTO]
-
-server.lua
+Register Status :
 ```lua
 
-local name    = 'hunger'
-local default = 1000000
-local color   = '#CFAD0F'
+Config.register_status = {
+'hunger',
+'thirst',
+'sanity',
+'energy'
+}
 
-TriggerEvent('esx_status:registerStatus', name, default, color, 
-	function(status) -- Visible calllback, if it return true the status will be visible
-		return true
-	end,
-	function(status) -- Tick callback, what to do at each tick
-		status.remove(200)
-	end,
-	{remove = 200} -- Client action (add / remove) so the client can be in sync with server
-)
+Config.UseEffects = true -- use effects from effect.lua
+
+Config.status_start_value = { -- starting points for status
+['hunger'] = 1000000,
+['thirst'] = 1000000,
+['sanity'] = 0, -- need to be a zero value
+['energy'] = 1000000,
+}
 
 
 ```
