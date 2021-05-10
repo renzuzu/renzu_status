@@ -1,5 +1,5 @@
 local Status, isPaused = {}, false
-
+local Statusregistered = false
 RegisterNetEvent('playerSpawned')
 AddEventHandler('playerSpawned', function(spawn)
 	Citizen.Wait(500)
@@ -33,8 +33,10 @@ end
 
 RegisterNetEvent('esx_status:registerStatus')
 AddEventHandler('esx_status:registerStatus', function(name, default, color, visible, tickCallback)
+	Statusregistered = false
 	local status = CreateStatus(name, default, color, visible, tickCallback)
 	table.insert(Status, status)
+	Statusregistered = true
 end)
 
 RegisterNetEvent('esx_status:unregisterStatus')
@@ -49,6 +51,10 @@ end)
 
 RegisterNetEvent('esx_status:load')
 AddEventHandler('esx_status:load', function(status)
+	while not Statusregistered do
+		Wait(2000)
+		--print("empty table")
+	end
 	for i=1, #Status, 1 do
 		for j=1, #status, 1 do
 			if Status[i].name == status[j].name then
@@ -153,7 +159,6 @@ Citizen.CreateThread(function()
 	exports('GetStatus', function(x)
 		return GetStatus(x)
 	end)
-	TriggerServerEvent("esx_status:playerLoaded")
 	while true do
 		Citizen.Wait(300)
 
@@ -169,6 +174,9 @@ end)
 
 -- Update server
 Citizen.CreateThread(function()
+	while not Statusregistered do
+		Wait(2000)
+	end
 	while true do
 		Citizen.Wait(Config.UpdateInterval)
 		TriggerServerEvent('esx_status:update', GetStatusData(true))

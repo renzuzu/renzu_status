@@ -1,5 +1,5 @@
 player = {}
-
+charslot = {}
 status_set = function(k, v, source)
 	player[source].val = v
 end
@@ -36,44 +36,40 @@ statusupdateClient = function(source)
 	TriggerEvent('standalone_status:updateClient', source)
 end
 
+function getStatus(source)
+	local source = tonumber(source)
+	if player[source] == nil then
+		player[source] = {}
+		if Config.multichar and Config.multichar_advanced then
+			while charslot[source] == nil do
+				Wait(500)
+			end
+		end
+		identifier = GetSteam(source)
+		MySQL.Async.fetchAll('SELECT status FROM users WHERE identifier = @identifier', {
+			['@identifier'] = identifier
+		}, function(result)
+			local data = {}
+
+			if result[1].status then
+				data = json.decode(result[1].status)
+			end
+			statusset(data, source)
+			TriggerClientEvent('esx_status:load', source, data)
+		end)
+	end
+end
+
 RegisterServerEvent('esx_status:playerLoaded')
 AddEventHandler('esx_status:playerLoaded', function(status)
 	local source = source
-	if player[source] == nil then
-	player[source] = {}
-	end
-	for k, v in ipairs(GetPlayerIdentifiers(source)) do
-		if string.match(v, Config.identifier) then
-			license = v
-			break
-		end
-	end
-	local identifier = license
-	--local identifier = license
-	print(identifier)
-	MySQL.Async.fetchAll('SELECT status FROM users WHERE identifier = @identifier', {
-		['@identifier'] = identifier
-	}, function(result)
-		local data = {}
-
-		if result[1].status then
-			data = json.decode(result[1].status)
-		end
-		statusset(data, source)
-		TriggerClientEvent('esx_status:load', source, data)
-	end)
+	getStatus(source)
 end)
 
 RegisterServerEvent('playerDropped')
 AddEventHandler('playerDropped', function()
-	for k, v in ipairs(GetPlayerIdentifiers(source)) do
-		if string.match(v, Config.identifier) then
-			license = v
-			break
-		end
-	end
-	local identifier = license
-	local status = statusget(source)
+	local identifier = GetSteam(tonumber(source))
+	local status = statusget(tonumber(source))
 
 	MySQL.Async.execute('UPDATE users SET status = @status WHERE identifier = @identifier', {
 		['@status']     = json.encode(status),
@@ -83,14 +79,8 @@ end)
 
 RegisterServerEvent('esx_status:getStatus')
 AddEventHandler('esx_status:getStatus', function(playerId, statusName, cb)
-	for k, v in ipairs(GetPlayerIdentifiers(source)) do
-		if string.match(v, Config.identifier) then
-			license = v
-			break
-		end
-	end
-	local identifier = license
-	local status  = statusget(source)
+	local identifier = GetSteam(tonumber(source))
+	local status  = statusget(tonumber(source))
 
 	for i=1, #status, 1 do
 		if status[i].name == statusName then
@@ -102,38 +92,49 @@ end)
 
 RegisterServerEvent('esx_status:update')
 AddEventHandler('esx_status:update', function(status)
-	statusset(status,source)
+	local source = tonumber(source)
+	statusset(status,tonumber(source))
 end)
-
-function Getplayer(source)
-	for k, v in ipairs(GetPlayerIdentifiers(source)) do
-		if string.match(v, Config.identifier) then
-			license = v
-			return {source = source, identifier = license}
-		end
-	end
-end
-
-function getidentifier(source)
-	for k, v in ipairs(GetPlayerIdentifiers(source)) do
-		if string.match(v, Config.identifier) then
-			license = v
-			return license
-		end
-	end
-end
 
 function SaveData()
 	local playerList = {}
 	for i=0, GetNumPlayerIndices()-1 do
 		local source = GetPlayerFromIndex(i)
-		local status  = statusget(source)
-		MySQL.Async.execute('UPDATE users SET status = @status WHERE identifier = @identifier', {
-			['@status']     = json.encode(status),
-			['@identifier'] = getidentifier(source)
-		})
+		getStatus(tonumber(source))
+		local status  = statusget(tonumber(source))
+		if status ~= 'null' and status ~= nil then
+			MySQL.Async.execute('UPDATE users SET status = @status WHERE identifier = @identifier', {
+				['@status']     = json.encode(status),
+				['@identifier'] = GetSteam(tonumber(source))
+			})
+		end
 	end
-	SetTimeout(10 * 60 * 1000, SaveData)
+	SetTimeout(Config.SaveDelay, SaveData)
 end
 
---SaveData()
+RegisterServerEvent(Config.characterchosenevent)
+AddEventHandler(Config.characterchosenevent, function(charid, ischar)
+    local source = tonumber(source)
+    charslot[source] = charid
+end)
+
+function GetSteam(source)
+	local source = tonumber(source)
+	for k, v in ipairs(GetPlayerIdentifiers(source)) do
+		if string.match(v, Config.identifier) then
+			license = v
+			break
+		end
+	end
+	if Config.multichar and Config.multichar_advanced and charslot[source] ~= nil then
+		license = string.gsub(license, "steam", ""..Config.charprefix..""..charslot[source].."")
+	end
+	return license
+end
+
+if Config.SaveLoop then
+	CreateThread(function()
+		Wait(2000)
+		SaveData()
+	end)
+end
