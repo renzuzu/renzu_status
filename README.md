@@ -18,7 +18,7 @@ git clone https://github.com/renzuzu/renzu_status/ renzu_status
 4) Add this in your server.cfg :
 
 ```
-start standalone_Status
+start standalone_status
 ```
 
 [HOWTO]
