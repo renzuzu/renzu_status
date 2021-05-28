@@ -4,6 +4,7 @@ Config.StatusMax      = 1000000
 Config.TickTime       = 4000
 Config.UpdateInterval = 4500
 Config.SaveDelay = 5000
+Config.OnTick_Value_only = true -- more optimized if you want to get value only
 Config.SaveLoop = true -- save every SaveDelay
 
 -- change to license: , if you are using licensed in identifier

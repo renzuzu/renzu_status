@@ -67,7 +67,11 @@ AddEventHandler('esx_status:load', function(status)
 			for i=1, #Status, 1 do
 				Status[i].onTick()
 			end
-			TriggerEvent('esx_status:onTick', GetStatusData(true))
+			if Config.OnTick_Value_only then
+				TriggerEvent('esx_status:onTick', GetStatus(Config.register_status))
+			else
+				TriggerEvent('esx_status:onTick', GetStatusData(true))
+			end
 			Citizen.Wait(Config.TickTime)
 		end
 	end)
@@ -148,28 +152,10 @@ function GetStatus(table)
 end
 
 Citizen.CreateThread(function()
-	Citizen.Wait(100)
-	exports('GetStatus', function(x)
-		return GetStatus(x)
-	end)
-end)
-
-Citizen.CreateThread(function()
 	Citizen.Wait(1000)
 	exports('GetStatus', function(x)
 		return GetStatus(x)
 	end)
-	while true do
-		Citizen.Wait(300)
-
-		if IsPauseMenuActive() and not isPaused then
-			isPaused = true
-			TriggerEvent('esx_status:setDisplay', 0.0)
-		elseif not IsPauseMenuActive() and isPaused then
-			isPaused = false 
-			TriggerEvent('esx_status:setDisplay', 0.5)
-		end
-	end
 end)
 
 -- Update server
