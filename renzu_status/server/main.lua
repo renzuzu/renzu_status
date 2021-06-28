@@ -65,6 +65,7 @@ end
 RegisterServerEvent('esx_status:playerLoaded')
 AddEventHandler('esx_status:playerLoaded', function(status)
 	local source = source
+	print("PLAYERLOADED")
 	getStatus(source)
 end)
 

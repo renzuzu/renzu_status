@@ -37,7 +37,7 @@ function CreateStatus(name, default, color, visible, tickCallback)
 		if self.val - val < 0 then
 			self.val = 0
 		else
-			self.val = self.val - val
+			self.val = self.val - (val * Config.Multiplier)
 		end
 	end
 

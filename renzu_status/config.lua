@@ -6,7 +6,7 @@ Config.UpdateInterval = 4500
 Config.SaveDelay = 5000
 Config.OnTick_Value_only = true -- more optimized if you want to get value only
 Config.SaveLoop = true -- save every SaveDelay
-
+Config.Multiplier = 5.0 -- multiplier value of remove value for status
 -- change to license: , if you are using licensed in identifier
 Config.identifier = 'steam:' 
 Config.multichar = false -- KASHACTERS, cd_multicharacter, etc...

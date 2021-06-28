@@ -53,7 +53,6 @@ RegisterNetEvent('esx_status:load')
 AddEventHandler('esx_status:load', function(status)
 	while not Statusregistered do
 		Wait(2000)
-		--print("empty table")
 	end
 	for i=1, #Status, 1 do
 		for j=1, #status, 1 do
@@ -62,19 +61,29 @@ AddEventHandler('esx_status:load', function(status)
 			end
 		end
 	end
-	Citizen.CreateThread(function()
+	CreateThread(function()
 		while true do
 			for i=1, #Status, 1 do
 				Status[i].onTick()
+				Wait(Config.TickTime)
 			end
-			if Config.OnTick_Value_only then
-				TriggerEvent('esx_status:onTick', GetStatus(Config.register_status))
-			else
-				TriggerEvent('esx_status:onTick', GetStatusData(true))
-			end
-			Citizen.Wait(Config.TickTime)
+			Wait(Config.TickTime)
 		end
 	end)
+end)
+
+CreateThread(function()
+	while not Statusregistered do
+		Wait(2000)
+	end
+	while true do
+		if Config.OnTick_Value_only then
+			TriggerEvent('esx_status:onTick', GetStatus(Config.register_status))
+		else
+			TriggerEvent('esx_status:onTick', GetStatusData(true))
+		end
+		Wait(Config.TickTime)
+	end
 end)
 
 RegisterNetEvent('esx_status:set')
@@ -127,7 +136,6 @@ end)
 
 RegisterNetEvent('esx_status:getStatusm')
 AddEventHandler('esx_status:getStatusm', function(table, cb)
-	--print(Status)
 	local multi = {}
 	for i=1, #Status, 1 do
 		for k,v in pairs(table) do
