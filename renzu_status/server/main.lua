@@ -1,5 +1,18 @@
 player = {}
 charslot = {}
+Citizen.CreateThread(function()
+	Wait(1000)
+	MySQL.Sync.execute([[
+		CREATE TABLE IF NOT EXISTS `status` (
+			`status` LONGTEXT NULL DEFAULT '[]' COLLATE 'utf8mb4_general_ci',
+			`identifier` VARCHAR(64) NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+			PRIMARY KEY (`identifier`) USING BTREE
+		)
+		COLLATE='utf8mb4_general_ci'
+		ENGINE=InnoDB
+		;
+	]])
+end)
 status_set = function(k, v, source)
 	player[source].val = v
 end
@@ -47,9 +60,16 @@ function getStatus(source)
 		end
 		identifier = GetSteam(source)
 		if identifier ~= nil then
-			MySQL.Async.fetchAll('SELECT status FROM users WHERE identifier = @identifier', {
+			MySQL.Async.fetchAll('SELECT status FROM status WHERE identifier = @identifier', {
 				['@identifier'] = identifier
 			}, function(result)
+				if #result <= 0 then
+					MySQL.Sync.execute('INSERT INTO status (status, identifier) VALUES (@status, @identifier)',
+                    {
+                        ['@identifier']   = identifier,
+                        ['@status']   = '[]'
+                    })
+				end
 				local data = {}
 
 				if result[1] and result[1].status then
@@ -74,7 +94,7 @@ AddEventHandler('playerDropped', function()
 	local identifier = GetSteam(tonumber(source))
 	local status = statusget(tonumber(source))
 
-	MySQL.Async.execute('UPDATE users SET status = @status WHERE identifier = @identifier', {
+	MySQL.Async.execute('UPDATE status SET status = @status WHERE identifier = @identifier', {
 		['@status']     = json.encode(status),
 		['@identifier'] = identifier
 	})
@@ -106,7 +126,7 @@ function SaveData()
 		getStatus(tonumber(source))
 		local status  = statusget(tonumber(source))
 		if GetPlayerPed(source) ~= 0 and status ~= 'null' and status ~= nil and status ~= '[]' then
-			MySQL.Async.execute('UPDATE users SET status = @status WHERE identifier = @identifier', {
+			MySQL.Async.execute('UPDATE status SET status = @status WHERE identifier = @identifier', {
 				['@status']     = json.encode(status),
 				['@identifier'] = GetSteam(tonumber(source))
 			})
