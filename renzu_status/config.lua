@@ -6,7 +6,7 @@ Config.UpdateInterval = 20000 -- Send Data to server interval
 Config.SaveDelay = 15000 -- Server Save to SQL interval
 Config.OnTick_Value_only = true -- more optimized if you want to get value only
 Config.SaveLoop = true -- save every SaveDelay
-Config.Multiplier = 5.0 -- multiplier value of remove value for status
+Config.Multiplier = 22.0 -- multiplier value of remove value for status
 -- change to license: , if you are using licensed in identifier
 Config.identifier = 'steam:' 
 Config.multichar = false -- KASHACTERS, cd_multicharacter, etc...
