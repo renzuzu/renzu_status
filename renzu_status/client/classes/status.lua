@@ -34,7 +34,7 @@ function CreateStatus(name, default, color, visible, tickCallback)
 	end
 
 	self.remove = function(val)
-		if self.val - val < 0 then
+		if self.val - val <= 0 then
 			self.val = 0
 		else
 			self.val = self.val - (val * Config.Multiplier)

@@ -18,16 +18,22 @@ Config.charprefix = 'Char' -- dont change unless you know what you are doing
 Config.register_status = {
 'hunger',
 'thirst',
-'sanity',
-'energy'
+'stress',
+'energy',
+'poop',
+'pee',
+'hygiene',
 }
 Config.UseEffects = true -- use effects from effect.lua
 
 Config.status_start_value = { -- starting points for status
 ['hunger'] = 1000000,
 ['thirst'] = 1000000,
-['sanity'] = 0, -- need to be a zero value
+['stress'] = 0, -- need to be a zero value
 ['energy'] = 1000000,
+['poop'] = 1000000,
+['pee'] = 1000000,
+['hygiene'] = 1000000,
 }
 
 Config.Admins = {

@@ -102,12 +102,6 @@ AddEventHandler('esx_status:add', function(name, val)
 	for i=1, #Status, 1 do
 		if Status[i].name == name then
 			Status[i].add(val)
-			if Status[i].name == 'thirst' then
-			TriggerEvent('renzu_shower:addpee', val / 3)
-			end
-			if Status[i].name == 'hunger' then
-			TriggerEvent('renzu_shower:addpoo', val / 5)
-			end
 			break
 		end
 	end
