@@ -22,7 +22,9 @@ statusget = function(source)
 end
 
 statusset = function(val,source)
-	player[source].val = val
+	if player[source] ~= nil then
+		player[source].val = val
+	end
 end
 
 statusadd = function(val,source)
