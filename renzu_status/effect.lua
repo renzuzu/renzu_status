@@ -64,7 +64,7 @@ Citizen.CreateThread(function()
 				
 				if energy < 5 and not antok then
 						antok = true
-						--TriggerEvent('esx_basicneeds:antok')
+						TriggerEvent('esx_basicneeds:antok')
 				end
 				TriggerEvent('esx_status:remove', 'energy', 3)
 
