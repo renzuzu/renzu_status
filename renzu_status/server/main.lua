@@ -1,18 +1,5 @@
 player = {}
 charslot = {}
-Citizen.CreateThread(function()
-	Wait(1000)
-	MySQL.Sync.execute([[
-		CREATE TABLE IF NOT EXISTS `status` (
-			`status` LONGTEXT NULL DEFAULT '[]' COLLATE 'utf8mb4_general_ci',
-			`identifier` VARCHAR(64) NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
-			PRIMARY KEY (`identifier`) USING BTREE
-		)
-		COLLATE='utf8mb4_general_ci'
-		ENGINE=InnoDB
-		;
-	]])
-end)
 status_set = function(k, v, source)
 	player[source].val = v
 end
