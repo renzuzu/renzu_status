@@ -1,17 +1,16 @@
 Citizen.CreateThread(function()
 	Wait(3000)
+	for k,v in pairs(Config.register_status) do
+		TriggerEvent('esx_status:registerStatus', v, Config.status_start_value[v], '#CFAD0F', function(status)
+			return true
+			end, function(status)
+			status.remove(100)
+		end)
+	end
 	if Config.UseEffects then
 		local crazy = false
 		Citizen.CreateThread(function()
-			for k,v in pairs(Config.register_status) do
-				TriggerEvent('esx_status:registerStatus', v, Config.status_start_value[v], '#CFAD0F', function(status)
-					return true
-					end, function(status)
-					status.remove(100)
-				end)
-			end
 			Citizen.Wait(1000)
-
 			while true do
 				--collectgarbage()
 				local playerPed  = PlayerPedId()
