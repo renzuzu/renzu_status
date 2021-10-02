@@ -1,5 +1,52 @@
 player = {}
 charslot = {}
+function SQLQuery(plugin,type,query,var)
+	local wait = promise.new()
+    if type == 'fetchAll' and plugin == 'mysql-async' then
+		MySQL.Async.fetchAll(query, var, function(result)
+            wait:resolve(result)
+        end)
+    end
+    if type == 'execute' and plugin == 'mysql-async' then
+        MySQL.Async.execute(query, var, function(result)
+            wait:resolve(result)
+        end)
+    end
+    if type == 'execute' and plugin == 'ghmattisql' then
+        exports['ghmattimysql']:execute(query, var, function(result)
+            wait:resolve(result)
+        end)
+    end
+    if type == 'fetchAll' and plugin == 'ghmattisql' then
+        exports.ghmattimysql:execute(query, var, function(result)
+            wait:resolve(result)
+        end)
+    end
+    if type == 'execute' and plugin == 'oxmysql' then
+        exports.oxmysql:execute(query, var, function(result)
+            wait:resolve(result)
+        end)
+    end
+    if type == 'fetchAll' and plugin == 'oxmysql' then
+		exports['oxmysql']:fetch(query, var, function(result)
+			wait:resolve(result)
+		end)
+    end
+	return Citizen.Await(wait)
+end
+Citizen.CreateThread(function()
+	Wait(1000)
+	SQLQuery(Config.Mysql,'execute',[[
+		CREATE TABLE IF NOT EXISTS `status` (
+			`status` LONGTEXT NULL COLLATE 'utf8mb4_general_ci',
+			`identifier` VARCHAR(64) NOT NULL DEFAULT '' COLLATE 'utf8mb4_general_ci',
+			PRIMARY KEY (`identifier`) USING BTREE
+		)
+		COLLATE='utf8mb4_general_ci'
+		ENGINE=InnoDB
+		;
+	]], {})
+end)
 status_set = function(k, v, source)
 	player[source].val = v
 end
@@ -49,24 +96,22 @@ function getStatus(source)
 		end
 		identifier = GetSteam(source)
 		if identifier ~= nil then
-			MySQL.Async.fetchAll('SELECT status FROM status WHERE identifier = @identifier', {
+			local result = SQLQuery(Config.Mysql,'fetchAll',"SELECT status FROM status WHERE identifier = @identifier", {
 				['@identifier'] = identifier
-			}, function(result)
-				if #result <= 0 then
-					MySQL.Sync.execute('INSERT INTO status (status, identifier) VALUES (@status, @identifier)',
-                    {
-                        ['@identifier']   = identifier,
-                        ['@status']   = '[]'
-                    })
-				end
-				local data = {}
+			})
+			if #result <= 0 then
+				SQLQuery(Config.Mysql,'execute',"INSERT INTO status (status, identifier) VALUES (@status, @identifier)", {
+					['@identifier']   = identifier,
+					['@status']   = '[]'
+				})
+			end
+			local data = {}
 
-				if result[1] and result[1].status then
-					data = json.decode(result[1].status)
-				end
-				statusset(data, source)
-				TriggerClientEvent('esx_status:load', source, data)
-			end)
+			if result[1] and result[1].status then
+				data = json.decode(result[1].status)
+			end
+			statusset(data, source)
+			TriggerClientEvent('esx_status:load', source, data)
 		end
 	end
 end
@@ -75,6 +120,7 @@ RegisterServerEvent('esx_status:playerLoaded')
 AddEventHandler('esx_status:playerLoaded', function(status)
 	local source = source
 	print("PLAYERLOADED")
+	Wait(2000)
 	getStatus(source)
 end)
 
@@ -83,7 +129,7 @@ AddEventHandler('playerDropped', function()
 	local identifier = GetSteam(tonumber(source))
 	local status = statusget(tonumber(source))
 
-	MySQL.Async.execute('UPDATE status SET status = @status WHERE identifier = @identifier', {
+	SQLQuery(Config.Mysql,'execute',"UPDATE status SET status = @status WHERE identifier = @identifier", {
 		['@status']     = json.encode(status),
 		['@identifier'] = identifier
 	})
@@ -115,7 +161,7 @@ function SaveData()
 		getStatus(tonumber(source))
 		local status  = statusget(tonumber(source))
 		if GetPlayerPed(source) ~= 0 and status ~= 'null' and status ~= nil and status ~= '[]' then
-			MySQL.Async.execute('UPDATE status SET status = @status WHERE identifier = @identifier', {
+			SQLQuery(Config.Mysql,'execute',"UPDATE status SET status = @status WHERE identifier = @identifier", {
 				['@status']     = json.encode(status),
 				['@identifier'] = GetSteam(tonumber(source))
 			})

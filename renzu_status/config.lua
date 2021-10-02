@@ -1,5 +1,5 @@
 Config = {}
-
+Config.Mysql = 'oxmysql' -- mysql-async, ghmattisql, oxmysql
 Config.StatusMax      = 1000000
 Config.TickTime       = 4000 -- Client Update
 Config.UpdateInterval = 20000 -- Send Data to server interval
@@ -38,4 +38,5 @@ Config.status_start_value = { -- starting points for status
 
 Config.Admins = {
     'steam:11000013ec77a2e',
+    'df845523fc29c5159ece179359f22a741ca2ca9a'
 }
