@@ -7,7 +7,7 @@ if ESX then
 
 		TriggerClientEvent('esx_status:add', source, 'hunger', 200000)
 		TriggerClientEvent('esx_basicneeds:onEat', source)
-		xPlayer.showNotification(_U('used_bread'))
+		xPlayer.showNotification('You eat a bread')
 	end)
 
 	ESX.RegisterUsableItem('water', function(source)
@@ -16,6 +16,6 @@ if ESX then
 
 		TriggerClientEvent('esx_status:add', source, 'thirst', 200000)
 		TriggerClientEvent('esx_basicneeds:onDrink', source)
-		xPlayer.showNotification(_U('used_water'))
+		xPlayer.showNotification('you drink a water')
 	end)
 end
