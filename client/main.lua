@@ -73,6 +73,7 @@ AddEventHandler('esx_status:load', function(status)
 end)
 
 CreateThread(function()
+	TriggerServerEvent("esx_status:playerLoaded")	
 	while not Statusregistered do
 		Wait(2000)
 	end
