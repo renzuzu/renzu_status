@@ -7,10 +7,12 @@ Citizen.CreateThread(function()
 			status.remove(100)
 		end)
 	end
+	
 	if Config.UseEffects then
 		local crazy = false
 		Citizen.CreateThread(function()
 			Citizen.Wait(1000)
+
 			while true do
 				--collectgarbage()
 				local playerPed  = PlayerPedId()
@@ -20,7 +22,7 @@ Citizen.CreateThread(function()
 				sanity = 0
 				thirst = 0
 				hunger = 0
-				energy = 0
+				energy = -1
 				local status = GetStatus(Config.register_status)
 				for k,v in pairs(status) do
 					Wait(100)
@@ -61,7 +63,7 @@ Citizen.CreateThread(function()
 					TriggerEvent('esx_status:add', 'sanity', 150000)
 				end
 				
-				if energy < 5 and not antok then
+				if enery ~= -1 and energy < 5 and not antok then
 						antok = true
 						TriggerEvent('esx_basicneeds:antok')
 				end

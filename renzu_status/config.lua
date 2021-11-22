@@ -1,14 +1,14 @@
 Config = {}
-Config.Mysql = 'oxmysql' -- mysql-async, ghmattisql, oxmysql
+Config.Mysql = 'mysql-async' -- mysql-async, ghmattisql, oxmysql
 Config.StatusMax      = 1000000
 Config.TickTime       = 4000 -- Client Update
 Config.UpdateInterval = 20000 -- Send Data to server interval
 Config.SaveDelay = 15000 -- Server Save to SQL interval
 Config.OnTick_Value_only = true -- more optimized if you want to get value only
-Config.SaveLoop = true -- save every SaveDelay
+Config.SaveLoop = false -- save loop in server
 Config.Multiplier = 22.0 -- multiplier value of remove value for status
 -- change to license: , if you are using licensed in identifier
-Config.identifier = 'steam:' 
+Config.identifier = 'license:' 
 Config.multichar = false -- KASHACTERS, cd_multicharacter, etc...
 --IMPORTANT PART IF USING Multicharacter
 -- if multichar_advanced is false == using steam: format or the config.identifier

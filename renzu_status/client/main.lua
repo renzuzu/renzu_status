@@ -153,22 +153,8 @@ function GetStatus(table)
 	return multi
 end
 
-Citizen.CreateThread(function()
-	Citizen.Wait(1000)
-	exports('GetStatus', function(x)
-		return GetStatus(x)
-	end)
-end)
-
--- Update server
-Citizen.CreateThread(function()
-	while not Statusregistered do
-		Wait(2000)
-	end
-	while true do
-		Citizen.Wait(Config.UpdateInterval)
-		TriggerServerEvent('esx_status:update', GetStatusData(true))
-	end
+exports('GetStatus', function(x)
+	return GetStatus(x)
 end)
 
 RegisterNetEvent('esx_status:healPlayer')
