@@ -12,14 +12,14 @@ Citizen.CreateThread(function()
 		local crazy = false
 		Citizen.CreateThread(function()
 			Citizen.Wait(1000)
-
+			local qbcore = GetResourceState('qb-core') == 'started'
 			while true do
 				--collectgarbage()
 				local playerPed  = PlayerPedId()
 				local prevHealth = GetEntityHealth(playerPed)
 				local health     = prevHealth
 				local fetch = false
-				sanity = 0
+				stress = 0
 				thirst = 0
 				hunger = 0
 				energy = -1
@@ -29,8 +29,8 @@ Citizen.CreateThread(function()
 					if k == 'thirst' then
 						thirst = v / 10000
 					end
-					if k == 'sanity' then
-						sanity = v / 10000
+					if k == 'stress' then
+						stress = v / 10000
 					end
 					if k == 'energy' then
 						energy = v / 10000
@@ -38,10 +38,6 @@ Citizen.CreateThread(function()
 					if k == 'hunger' then
 						hunger = v / 10000
 					end
-				end
-				fetch = true
-				while not fetch do
-					Citizen.Wait(100)
 				end
 				if hunger <= 0 then
 					if prevHealth <= 150 then
@@ -60,28 +56,27 @@ Citizen.CreateThread(function()
 				end
 				
 				if hunger < 5 then
-					TriggerEvent('esx_status:add', 'sanity', 150000)
+					TriggerEvent('esx_status:add', 'stress', 150000)
 				end
 				
 				if enery ~= -1 and energy < 5 and not antok then
-						antok = true
-						TriggerEvent('esx_basicneeds:antok')
+					antok = true
+					TriggerEvent('esx_basicneeds:antok')
 				end
 				TriggerEvent('esx_status:remove', 'energy', 3)
 
 				
-				if sanity >= 98 and not crazy then
-					--Makeloading(msg,ms)
+				if stress >= 98 and not crazy then
 					TriggerEvent('esx_basicneeds:sanityeffect')
 					--TriggerServerEvent("Server:SoundToClient", NetworkGetNetworkIdFromEntity(GetPlayerPed(-1)),"crazy", 1.00)
 					crazy = true
 					SetPedIsDrunk(playerPed, true)
-				elseif sanity < 20 then
+				elseif stress < 20 then
 					crazy = false
 					SetPedIsDrunk(playerPed, false)
 				end
 
-				if health ~= prevHealth then
+				if not qbcore and health ~= prevHealth then
 					SetEntityHealth(playerPed, health)
 				end
 				Citizen.Wait(10000)

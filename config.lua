@@ -16,24 +16,24 @@ Config.multichar_advanced = true -- Using Permanent Char1,Char2 up to Char5 iden
 Config.characterchosenevent = 'kashactersS:CharacterChosen' -- this event contains charid (IMPORTANT and will read only if using advanced)
 Config.charprefix = 'Char' -- dont change unless you know what you are doing
 Config.register_status = {
-'hunger',
-'thirst',
-'stress',
-'energy',
-'poop',
-'pee',
-'hygiene',
+    'hunger',
+    'thirst',
+    'stress',
+    'energy',
+    'poop',
+    'pee',
+    'hygiene',
 }
 Config.UseEffects = true -- use effects from effect.lua
 
 Config.status_start_value = { -- starting points for status
-['hunger'] = 1000000,
-['thirst'] = 1000000,
-['stress'] = 0, -- need to be a zero value
-['energy'] = 1000000,
-['poop'] = 1000000,
-['pee'] = 1000000,
-['hygiene'] = 1000000,
+    ['hunger'] = 1000000,
+    ['thirst'] = 1000000,
+    ['stress'] = 0, -- need to be a zero value
+    ['energy'] = 1000000,
+    ['poop'] = 1000000,
+    ['pee'] = 1000000,
+    ['hygiene'] = 1000000,
 }
 
 Config.Admins = {
