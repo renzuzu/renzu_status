@@ -66,12 +66,12 @@ Citizen.CreateThread(function()
 				TriggerEvent('esx_status:remove', 'energy', 3)
 
 				
-				if stress >= 98 and not crazy then
+				if not qbcore and stress >= 98 and not crazy then
 					TriggerEvent('esx_basicneeds:sanityeffect')
 					--TriggerServerEvent("Server:SoundToClient", NetworkGetNetworkIdFromEntity(GetPlayerPed(-1)),"crazy", 1.00)
 					crazy = true
 					SetPedIsDrunk(playerPed, true)
-				elseif stress < 20 then
+				elseif not qbcore and stress < 20 then
 					crazy = false
 					SetPedIsDrunk(playerPed, false)
 				end
