@@ -3,7 +3,7 @@ charslot = {}
 function SQLQuery(plugin,type,query,var)
 	local wait = promise.new()
     if type == 'fetchAll' and plugin == 'mysql-async' then
-		MySQL.Async.fetchAll(query, var, function(result)
+		MySQL.query(query, var, function(result)
             wait:resolve(result)
         end)
     end
@@ -23,12 +23,12 @@ function SQLQuery(plugin,type,query,var)
         end)
     end
     if type == 'execute' and plugin == 'oxmysql' then
-        exports.oxmysql:execute(query, var, function(result)
+        exports.oxmysql:query(query, var, function(result)
             wait:resolve(result)
         end)
     end
     if type == 'fetchAll' and plugin == 'oxmysql' then
-		exports['oxmysql']:fetch(query, var, function(result)
+		exports['oxmysql']:query(query, var, function(result)
 			wait:resolve(result)
 		end)
     end
@@ -96,22 +96,17 @@ function getStatus(source)
 		end
 		identifier = GetSteam(source)
 		if identifier ~= nil then
-			local result = SQLQuery(Config.Mysql,'fetchAll',"SELECT status FROM status WHERE identifier = @identifier", {
-				['@identifier'] = identifier
-			})
-			if #result <= 0 then
-				SQLQuery(Config.Mysql,'execute',"INSERT INTO status (status, identifier) VALUES (@status, @identifier)", {
-					['@identifier']   = identifier,
-					['@status']   = '[]'
-				})
+			local result = MySQL.scalar.await('SELECT * FROM status WHERE identifier = ?', {identifier})
+			if not result then
+				SQLQuery(Config.Mysql,'execute',"INSERT INTO status (status, identifier) VALUES (?,?)", {'[]',identifier})
 			end
 			local data = {}
 
-			if result[1] and result[1].status then
+			if result and result[1] and result[1].status then
 				data = json.decode(result[1].status)
+				statusset(data, source)
+				TriggerClientEvent('esx_status:load', source, data)
 			end
-			statusset(data, source)
-			TriggerClientEvent('esx_status:load', source, data)
 		end
 	end
 end
