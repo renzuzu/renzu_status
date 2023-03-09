@@ -39,20 +39,12 @@ Citizen.CreateThread(function()
 						hunger = v / 10000
 					end
 				end
-				if hunger <= 0 then
-					if prevHealth <= 150 then
-						health = health - 60
-					else
-						health = health - 60
-					end
+				if hunger <= 0 and not qbcore then
+					SetEntityHealth(playerPed, prevHealth-5)
 				end
 
-				if thirst <= 0 then
-					if prevHealth <= 150 then
-						health = health - 60
-					else
-						health = health - 60
-					end
+				if thirst <= 0 and not qbcore then
+					SetEntityHealth(playerPed, prevHealth-5)
 				end
 				
 				if hunger < 5 then
@@ -76,9 +68,6 @@ Citizen.CreateThread(function()
 					SetPedIsDrunk(playerPed, false)
 				end
 
-				if not qbcore and health ~= prevHealth then
-					SetEntityHealth(playerPed, health)
-				end
 				Citizen.Wait(10000)
 			end
 		end)
