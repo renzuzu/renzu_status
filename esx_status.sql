@@ -1,4 +1,3 @@
-USE `es_extended`;
 
 CREATE TABLE IF NOT EXISTS `status` (
     `status` LONGTEXT NULL COLLATE 'utf8mb4_general_ci',
